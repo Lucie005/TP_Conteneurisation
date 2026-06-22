@@ -1,0 +1,26 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3001"
+    environment:
+      REDIS_HOST: ${REDIS_HOST:-cache}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+    depends_on:
+      - cache
+
+  cache:
+    image: redis:7-alpine
+    # Aucun port publié vers l'hôte pour isoler Redis
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
